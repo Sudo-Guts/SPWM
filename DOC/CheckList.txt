@@ -1,0 +1,155 @@
+SPWM — CHECKLIST MAESTRO DEL PROYECTO
+===================================
+
+Proyecto: Inversor trifásico SPWM con ATmega328P, IR2109 y puente de MOSFET.
+Carpeta de trabajo: SPWM/ en Google Drive.
+Actualización: 2026-10-11
+
+CONVENCIONES
+------------
+[x] Completado y comprobado; [ ] pendiente de ejecutar o validar.
+No marcar como completo algo que solo esté diseñado o supuesto.
+Añadir evidencia (archivo, commit, medición o captura) junto a la tarea si aplica.
+No utilizar los Gerbers existentes para fabricar hasta cerrar ERC/DRC y revisión de pads.
+La ausencia de protección de sobrecorriente dedicada es una decisión del borrador;
+la limitación de la fuente no sustituye la evaluación de fallas.
+
+ORDEN DE TRABAJO
+----------------
+Estructura -> requisitos -> esquemático/PCB -> simulación y firmware
+-> pruebas sin bus de potencia -> pruebas de potencia -> documentación/cierre.
+
+00. ORGANIZACIÓN Y CONTROL DE VERSIONES
+---------------------------------------
+[x] Crear la estructura SPWM/ con C0DE/, DOC/, PCB/ y SIM/ en Google Drive.
+[x] Crear SIM/psim/, SIM/spice/ y SIM/spice/models/.
+[x] Conservar los archivos editables de KiCad y separar las salidas de fabricación en PCB/fabrication/.
+[ ] Confirmar en Linux que el repositorio Git exista solo en la raíz SPWM/.
+[ ] Revisar .gitignore y evitar versionar C0DE/out/, archivos temporales y preferencias de KiCad.
+[ ] Crear un commit de referencia del estado inicial, conservando SPWM_B1 como respaldo.
+[ ] Comprobar que el README y este checklist correspondan con el estado real del repositorio.
+
+01. OBJETIVOS Y ESPECIFICACIONES
+--------------------------------
+[ ] Definir la carga que alimentará el inversor y sus características nominales.
+[ ] Confirmar tensión del bus de continua prevista (28 V) y límite de corriente de la fuente.
+[ ] Precisar rango de frecuencia de salida (objetivo inicial: 0 a 50 Hz).
+[ ] Confirmar frecuencia portadora PWM objetivo (borrador: 7.8125 kHz) y tolerancias.
+[ ] Definir el índice máximo de modulación y la relación V/f aplicable a la carga.
+[ ] Documentar criterios de aceptación: formas de onda, desfases, corriente, temperatura y estados seguros.
+[ ] Definir instrumentos disponibles, puntos de prueba y secuencia de validación.
+
+02. ESQUEMÁTICO Y COMPONENTES (KICAD)
+-------------------------------------
+[ ] Abrir SPWM.kicad_pro y SPWM.kicad_sch y verificar integridad del proyecto.
+[ ] Ejecutar ERC y resolver o justificar cada advertencia y error.
+[ ] Comprobar alimentación, desacoplo, reloj y conexiones GND del ATmega328P.
+[ ] Confirmar cristal de 16 MHz, capacitores asociados, fusibles y fuente de reloj.
+[ ] Verificar conexiones de programación ISP y compatibilidad del USBasp previsto.
+[ ] Documentar asignación real: OC1A/PB1, OC1B/PB2, OC2B/PD3, UART y Enable.
+[ ] Confirmar en esquemático/PCB el pin de Enable (PCB revisado: PD2), no asumir PD4.
+[ ] Verificar entradas, salidas, alimentación y características de los tres IR2109.
+[ ] Revisar bootstrap, restricciones de ciclo de trabajo y condiciones de recarga.
+[ ] Verificar tiempos muertos reales, interbloqueo y estados durante reset y arranque.
+[ ] Comparar IRF540N del esquema con IRF640N físico: encapsulado, pinout, huella y parámetros.
+[ ] Revisar resistencias de compuerta, retornos, desacoplo y componentes de protección.
+[ ] Comprobar fuentes +28 V, +12 V, +5 V, masas y capacitores del bus DC.
+[ ] Revisar conectores de alimentación, fases U/V/W y puntos de medición.
+[ ] Generar lista de materiales (BOM) consistente con el esquema corregido.
+
+03. PCB Y FABRICACIÓN
+---------------------
+[ ] Abrir SPWM.kicad_pcb y actualizar PCB desde el esquemático validado.
+[ ] Revisar pads de U6 (ATmega328P) y confirmar que estén todos los pads requeridos.
+[ ] Revisar pads de Q1 a Q6, en particular Q3, Q4 y Q6; corregir posibles ausencias.
+[ ] Verificar huellas, orientación, pin 1 y dimensiones de los componentes reales.
+[ ] Comprobar continuidad de redes, vías, zonas de cobre y pistas sin conectar.
+[ ] Dimensionar pistas y conectores según corrientes reales del inversor.
+[ ] Revisar separación física entre potencia, señales de control y retornos de corriente.
+[ ] Revisar disipación térmica, espacio de MOSFET y fijaciones mecánicas.
+[ ] Ejecutar DRC con las reglas apropiadas y resolver hallazgos.
+[ ] Revisar serigrafía, polaridades, rotulado de conectores y límites de placa.
+[ ] Generar NUEVOS Gerbers y perforaciones en fabrication/ solo tras aprobar ERC/DRC.
+[ ] Inspeccionar en visor Gerber las capas y perforaciones exportadas.
+[ ] Comprobar archivos de fabricación contra esquema/PCB definitivo antes de ordenar la tarjeta.
+
+04. SIMULACIÓN (SIM/)
+---------------------
+[ ] Definir qué circuitos y mediciones se validarán en PSIM y cuáles en SPICE.
+[ ] Construir en SIM/psim/ un modelo funcional del inversor trifásico y su carga.
+[ ] Aplicar tres moduladoras a 120 grados y confirmar secuencia de fases.
+[ ] Simular SPWM con alimentación y frecuencia de portadora nominales.
+[ ] Evaluar tensión de fase, tensión línea-línea, corriente y armónicos según la carga.
+[ ] Simular respuesta a cambios de frecuencia/amplitud y rampa de arranque.
+[ ] Preparar en SIM/spice/ las pruebas eléctricas necesarias de drivers y potencia.
+[ ] Guardar en SIM/spice/models/ únicamente modelos usados, con procedencia y versión.
+[ ] Comprobar compuertas, bootstrap, conmutación y sobreimpulsos con modelos adecuados.
+[ ] Comparar los resultados de simulación con los requisitos del proyecto.
+
+05. FIRMWARE Y TOOLCHAIN (C0DE/)
+--------------------------------
+[ ] Corroborar que el Makefile utiliza rutas relativas a C0DE/ y F_CPU=16000000UL.
+[ ] Comprobar compilación en Linux con AVR-GCC y GNU Make; resolver advertencias.
+[ ] Verificar tamaño de Flash/SRAM con make size y generar ELF/HEX.
+[ ] Programar y verificar firmware mínimo con AVRDUDE/USBasp.
+[ ] Configurar salidas y niveles seguros desde reset; drivers deshabilitados por defecto.
+[ ] Configurar Timer1 (OC1A/OC1B) y Timer2 (OC2B) según la topología seleccionada.
+[ ] Comprobar frecuencia PWM, modo, prescalers y alineación de los tres canales.
+[ ] Implementar tabla sinusoidal (LUT) y generador digital de fase (DDS) si se confirma el diseño.
+[ ] Generar tres referencias moduladoras con desfases exactos de 120 grados.
+[ ] Actualizar registros OCR en instantes definidos y sin ciclos de trabajo espurios.
+[ ] Implementar límites del índice de modulación y saturación.
+[ ] Implementar control V/f consistente con la carga y el bus de 28 V.
+[ ] Implementar rampas de aceleración/desaceleración y manejo de frecuencia cero.
+[ ] Implementar UART y validar formato, rango y respuesta ante comandos inválidos.
+[ ] Implementar estados de reposo, inicialización, arranque, marcha, paro y falla.
+[ ] Validar secuencia Enable/IR2109/bootstrap sin depender solo de retardos arbitrarios.
+[ ] Documentar interrupciones, latencias y uso de memoria; eliminar condiciones de carrera.
+[ ] Registrar versión compilada, opciones de compilación y fusibles verificados.
+
+06. PRUEBAS EN BANCO, SIN BUS DE POTENCIA
+-----------------------------------------
+[ ] Inspeccionar visualmente soldaduras, polaridad, continuidad y cortocircuitos.
+[ ] Medir alimentación de +5 V y funcionamiento del reloj del ATmega328P.
+[ ] Verificar comunicación ISP y UART antes de habilitar drivers.
+[ ] Medir PWM U/V/W sin etapa de potencia energizada.
+[ ] Confirmar por osciloscopio frecuencia, ciclo de trabajo y desfase de moduladoras.
+[ ] Comprobar que reset, arranque y paro mantengan estados seguros.
+[ ] Probar alimentación de drivers y señales de compuerta bajo condiciones controladas.
+[ ] Medir tiempos muertos y ausencia de conducción cruzada antes de conectar el bus.
+[ ] Validar restricciones bootstrap y apagado seguro de cada rama.
+
+07. INTEGRACIÓN Y PRUEBAS DE POTENCIA
+-------------------------------------
+[ ] Cerrar revisión de esquema/PCB y todas las pruebas previas sin bus de potencia.
+[ ] Preparar fuente DC de 28 V con limitación de corriente y método de corte inmediato.
+[ ] Definir carga de prueba adecuada y método de medición seguro y repetible.
+[ ] Energizar por etapas y registrar corriente, tensión y comportamiento sin comando de marcha.
+[ ] Comprobar habilitación de drivers y funcionamiento de las tres ramas.
+[ ] Medir tensión línea-línea y frecuencia de salida contra referencias previstas.
+[ ] Comprobar control V/f y transiciones de arranque, marcha y paro.
+[ ] Medir corriente de carga, calentamiento de componentes y estabilidad.
+[ ] Analizar ruido, conmutaciones anómalas, fallas y comportamiento ante paro.
+[ ] Registrar medidas de mitigación por no contar con protección de sobrecorriente dedicada.
+[ ] Documentar resultados y definir si la versión está lista para una nueva revisión.
+
+08. DOCUMENTACIÓN Y CIERRE DE BORRADOR
+--------------------------------------
+[ ] Actualizar README.md con arquitectura, requisitos, comandos y procedimiento de compilación.
+[ ] Mantener CheckList.txt con estados reales y evidencia de cada validación.
+[ ] Guardar esquemático, PCB, BOM y salidas de fabricación correspondientes a la misma versión.
+[ ] Documentar parámetros de simulación y resultados comparables con mediciones.
+[ ] Documentar prueba de banco y prueba de potencia (fecha, equipo, condiciones, mediciones).
+[ ] Verificar .gitignore, árbol final, estado Git y ausencia de repositorios anidados.
+[ ] Realizar revisión final del borrador, commit y etiqueta Git cuando corresponda.
+
+NOTAS DE REVISIÓN
+-----------------
+- KiCad actual: se identificaron posibles pads faltantes; verificarlo directamente
+  en KiCad y documentar corrección. No dar por aprobadas huellas ni Gerbers.
+- Los MOSFET se etiquetan IRF540N en el diseño recuperado, aunque el componente
+  físico previsto es IRF640N. Verificar antes de comprar/fabricar/soldar.
+- Hay discrepancia histórica entre PD4 (firmware propuesto) y PD2 (PCB revisado)
+  para Enable; usar la asignación validada contra el hardware real.
+- Fuente de reloj prevista de 16 MHz: se deben confirmar fusibles y medición.
+- Mantener SPWM_B1/ como referencia histórica, separada de SPWM/.

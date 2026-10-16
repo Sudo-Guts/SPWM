@@ -1,0 +1,122 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/avr-gcc",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-std=gnu11",
+      "-Os",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Wshadow",
+      "-Wconversion",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-Iinc",
+      "-c",
+      "-o",
+      "build/control.o",
+      "src/control.c"
+    ],
+    "directory": "/home/guts/SPWM/C0DE",
+    "file": "/home/guts/SPWM/C0DE/src/control.c",
+    "output": "/home/guts/SPWM/C0DE/build/control.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/avr-gcc",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-std=gnu11",
+      "-Os",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Wshadow",
+      "-Wconversion",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-Iinc",
+      "-c",
+      "-o",
+      "build/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/guts/SPWM/C0DE",
+    "file": "/home/guts/SPWM/C0DE/src/main.c",
+    "output": "/home/guts/SPWM/C0DE/build/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/avr-gcc",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-std=gnu11",
+      "-Os",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Wshadow",
+      "-Wconversion",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-Iinc",
+      "-c",
+      "-o",
+      "build/pwm.o",
+      "src/pwm.c"
+    ],
+    "directory": "/home/guts/SPWM/C0DE",
+    "file": "/home/guts/SPWM/C0DE/src/pwm.c",
+    "output": "/home/guts/SPWM/C0DE/build/pwm.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/avr-gcc",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-std=gnu11",
+      "-Os",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Wshadow",
+      "-Wconversion",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-Iinc",
+      "-c",
+      "-o",
+      "build/spwm.o",
+      "src/spwm.c"
+    ],
+    "directory": "/home/guts/SPWM/C0DE",
+    "file": "/home/guts/SPWM/C0DE/src/spwm.c",
+    "output": "/home/guts/SPWM/C0DE/build/spwm.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/avr-gcc",
+      "-mmcu=atmega328p",
+      "-DF_CPU=16000000UL",
+      "-std=gnu11",
+      "-Os",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Wshadow",
+      "-Wconversion",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-Iinc",
+      "-c",
+      "-o",
+      "build/uart.o",
+      "src/uart.c"
+    ],
+    "directory": "/home/guts/SPWM/C0DE",
+    "file": "/home/guts/SPWM/C0DE/src/uart.c",
+    "output": "/home/guts/SPWM/C0DE/build/uart.o"
+  }
+]
